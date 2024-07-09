@@ -18,7 +18,7 @@ cp .env.example .env
 ## Step 3: Build and Start Docker Containers
 
 ```sh
-docker-compose up --build -d
+docker compose up --build -d
 ```
 
 ## Step 4: Install PHP Dependencies
@@ -32,7 +32,6 @@ composer install
 ```sh
 npm i
 npm run build
-npm run dev
 ```
 
 ## Step 6: Generate Application Key
