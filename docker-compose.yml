@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: laravel-app
+    container_name: laravel-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    ports:
+      - "8000:9000"
+      - "5173:5173"
+    networks:
+      - laravel
+    environment:
+      - NODE_ENV=development
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: mindletic
+      MYSQL_USER: mindletic
+      MYSQL_PASSWORD: mindleticpassword
+      MYSQL_ROOT_PASSWORD: mindleticpassword
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - laravel
+    ports:
+      - "3306:3306"
+    platform: linux/amd64
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - laravel
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: mindleticpassword
+    ports:
+      - "8080:80"
+    networks:
+      - laravel
+    platform: linux/amd64
+
+volumes:
+  mysql-data:
+
+networks:
+  laravel:
+    driver: bridge
