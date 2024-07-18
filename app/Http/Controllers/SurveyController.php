@@ -6,12 +6,13 @@ use App\Models\Survey;
 use App\Models\SurveyQuestion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
 
 class SurveyController extends Controller
 {
     public function create(Request $request)
     {
-        Log::info('Received request to create survey', $request->all());
+        Log::info('SurveyController@create: Received request', $request->all());
 
         $request->validate([
             'title' => 'required|string|max:255',
@@ -28,16 +29,22 @@ class SurveyController extends Controller
                 $survey->questions()->create($question);
             }
 
-            return response()->json(['message' => 'Survey created successfully'], 201);
+            return Inertia::render('SurveyCreated', [
+                'message' => 'Survey created successfully'
+            ]);
         } catch (\Exception $e) {
             Log::error('Error creating survey: ' . $e->getMessage());
-            return response()->json(['message' => 'Error creating survey'], 500);
+            return Inertia::render('ErrorPage', [
+                'message' => 'Error creating survey'
+            ]);
         }
     }
 
     public function index()
     {
         $surveys = Survey::with('questions')->get();
-        return response()->json($surveys);
+        return Inertia::render('SurveyList', [
+            'surveys' => $surveys
+        ]);
     }
 }

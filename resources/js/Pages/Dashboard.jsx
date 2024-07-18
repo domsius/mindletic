@@ -7,11 +7,12 @@ import SurveyResults from './SurveyResults';
 export default function Dashboard() {
     const { auth, surveys } = usePage().props; 
 
+    console.log(JSON.stringify(surveys, null, 2));
+
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>}
-        >
+            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>}>
             <Head title="Dashboard" />
 
             <div className="py-12">
@@ -22,7 +23,16 @@ export default function Dashboard() {
                                 <>
                                     <CreateSurvey />
                                     {surveys.map(survey => (
-                                        <SurveyResults key={survey.id} survey={survey} />
+                                        <div key={survey.id}>
+                                            <h3>Title: {survey.title}</h3>
+                                            <p>Description: {survey.description}</p>
+                                            {survey.questions.map(question => (
+                                                <div key={question.id} className='flex gap-2'>
+                                                    <h4>Question: {question.question}</h4>
+                                                    <p>{question.type}</p>
+                                                </div>
+                                            ))}
+                                        </div>
                                     ))}
                                 </>
                             )}

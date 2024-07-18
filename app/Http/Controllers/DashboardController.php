@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Inertia\Inertia;
 use App\Models\Survey;
+use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $surveys = Survey::with('questions', 'responses')->get(); 
+        $user = auth()->user();
+        $surveys = Survey::with('questions')->get();
+
         return Inertia::render('Dashboard', [
             'auth' => [
-                'user' => auth()->user(),
+                'user' => $user
             ],
-            'surveys' => $surveys,
+            'surveys' => $surveys
         ]);
     }
 }
